@@ -74,6 +74,10 @@ env_thirdparty.Prepend(
 # Also requires libpng headers
 if env["builtin_libpng"]:
     env_thirdparty.Prepend(CPPPATH=["#thirdparty/libpng"])
+else:
+    libpng_thirdparty_dir = env.get_precompiled_static_lib_path("libpng")
+    env_thirdparty.Append(CPPPATH=[libpng_thirdparty_dir + "include"])
+
 
 env_thirdparty.add_source_files(thirdparty_obj, thirdparty_sources)
 env.modules_sources += thirdparty_obj

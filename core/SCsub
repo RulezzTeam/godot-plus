@@ -153,6 +153,7 @@ if env["builtin_zstd"]:
 else:
     zstd_thirdparty_dir = env.get_precompiled_static_lib_path("zstd")
     env_thirdparty.Append(CPPPATH=[zstd_thirdparty_dir + "include"])
+    env.Append(CPPPATH=[zstd_thirdparty_dir + "include"])
     env.Append(LIBPATH=[zstd_thirdparty_dir + "lib"])
     env.Append(LINKFLAGS=[
         "zstd.lib",

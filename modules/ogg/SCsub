@@ -24,7 +24,7 @@ if env["builtin_libogg"]:
     env_thirdparty.add_source_files(thirdparty_obj, thirdparty_sources)
     env.modules_sources += thirdparty_obj
 else:
-    ogg_thirdparty_dir = "#thirdparty-precompiled/libogg_x64-windows-static/"
+    ogg_thirdparty_dir = env.get_precompiled_static_lib_path("libogg")
     env_ogg.Append(CPPPATH=[ogg_thirdparty_dir + "include"])
     env.Append(LIBPATH=[ogg_thirdparty_dir + "lib"])
     env.Append(LINKFLAGS= [

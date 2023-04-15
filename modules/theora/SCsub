@@ -4,8 +4,8 @@ Import("env")
 Import("env_modules")
 
 env_theora = env_modules.Clone()
-vorbis_thirdparty_dir = "#thirdparty-precompiled/libvorbis_x64-windows-static/"
-ogg_thirdparty_dir = "#thirdparty-precompiled/libogg_x64-windows-static/"
+vorbis_thirdparty_dir = env.get_precompiled_static_lib_path("libvorbis")
+ogg_thirdparty_dir = env.get_precompiled_static_lib_path("libogg")
 
 # Thirdparty source files
 
@@ -98,7 +98,7 @@ if env["builtin_libtheora"]:
     env_thirdparty.add_source_files(thirdparty_obj, thirdparty_sources)
     env.modules_sources += thirdparty_obj
 else:
-    theora_thirdparty_dir = "#thirdparty-precompiled/libtheora_x64-windows-static/"
+    theora_thirdparty_dir = env.get_precompiled_static_lib_path("libtheora")
     env_theora.Prepend(CPPPATH=[ogg_thirdparty_dir + "include"])
     env_theora.Prepend(CPPPATH=[vorbis_thirdparty_dir + "include"])
     env_theora.Append(CPPPATH=[theora_thirdparty_dir + "include"])

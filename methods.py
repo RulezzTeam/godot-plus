@@ -179,7 +179,6 @@ const char *const VERSION_HASH = "{git_hash}";
 
 
 def parse_cg_file(fname, uniforms, sizes, conditionals):
-
     fs = open(fname, "r")
     line = fs.readline()
 
@@ -427,7 +426,6 @@ def sort_module_list(env):
 
 
 def use_windows_spawn_fix(self, platform=None):
-
     if os.name != "nt":
         return  # not needed, only for windows
 
@@ -486,7 +484,6 @@ def use_windows_spawn_fix(self, platform=None):
 
 
 def save_active_platforms(apnames, ap):
-
     for x in ap:
         svg_names = []
         if os.path.isfile(x + "/logo.svg"):
@@ -514,7 +511,6 @@ def save_active_platforms(apnames, ap):
 
 
 def no_verbose(sys, env):
-
     colors = {}
 
     # Colors are disabled in non-TTY environments such as pipes. This means
@@ -905,6 +901,12 @@ def add_program(env, name, sources, **args):
     program = env.Program(name, sources, **args)
     env.NoCache(program)
     return program
+
+
+def get_precompiled_static_lib_path(env, name):
+    if env["use_static_cpp"]:
+        return "#thirdparty-precompiled/%s_x64-windows-static/" % name
+    return "#thirdparty-precompiled/%s_x64-windows-static-md/" % name
 
 
 def CommandNoCache(env, target, sources, command, **args):

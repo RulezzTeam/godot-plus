@@ -135,6 +135,7 @@ env_base.__class__.use_windows_spawn_fix = methods.use_windows_spawn_fix
 env_base.__class__.add_shared_library = methods.add_shared_library
 env_base.__class__.add_library = methods.add_library
 env_base.__class__.add_program = methods.add_program
+env_base.__class__.get_precompiled_static_lib_path = methods.get_precompiled_static_lib_path
 env_base.__class__.CommandNoCache = methods.CommandNoCache
 env_base.__class__.Run = methods.Run
 env_base.__class__.disable_warnings = methods.disable_warnings

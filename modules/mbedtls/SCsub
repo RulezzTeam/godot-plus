@@ -108,7 +108,7 @@ if env["builtin_mbedtls"]:
 
 else:
     env_mbed_tls.disable_warnings()
-    mbedtls_thirdparty_dir = "#thirdparty-precompiled/mbedtls_x64-windows-static/"
+    mbedtls_thirdparty_dir = env.get_precompiled_static_lib_path("mbedtls")
     env_mbed_tls.Append(CPPPATH=[mbedtls_thirdparty_dir + "include"])
     env.Append(LIBPATH=[mbedtls_thirdparty_dir + "lib"])
     env.Append(LINKFLAGS= [

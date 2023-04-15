@@ -69,7 +69,7 @@ else:
     env_regex.Append(CPPDEFINES=[("PCRE2_CODE_UNIT_WIDTH", 16)])
     env_regex.Append(CPPDEFINES=[("PCRE2_CODE_UNIT_WIDTH", 32)])
 
-    pcre2_thirdparty_dir = "#thirdparty-precompiled/pcre2_x64-windows-static/"
+    pcre2_thirdparty_dir = get_precompiled_static_lib_path(env, "pcre2")
     env_regex.Append(CPPPATH=[pcre2_thirdparty_dir + "include"])
     env.Append(LIBPATH=[pcre2_thirdparty_dir + "lib"])
     env.Append(LINKFLAGS= [

@@ -56,7 +56,7 @@ if env["builtin_libvorbis"]:
     env.modules_sources += thirdparty_obj
 
 else:
-    vorbis_thirdparty_dir = "#thirdparty-precompiled/libvorbis_x64-windows-static/"
+    vorbis_thirdparty_dir = env.get_precompiled_static_lib_path("libvorbis")
     env_vorbis.Append(CPPPATH=[ogg_thirdparty_dir + "include"])
     env_vorbis.Append(CPPPATH=[vorbis_thirdparty_dir + "include"])
     env.Append(LIBPATH=[vorbis_thirdparty_dir + "lib"])

@@ -117,7 +117,7 @@ if env["builtin_embree"]:
 else:
     env_raycast.disable_warnings()
 
-    embree3_thirdparty_dir = "#thirdparty-precompiled/embree3_x64-windows-static/"
+    embree3_thirdparty_dir = env.get_precompiled_static_lib_path("embree3")
     env_raycast.Append(CPPPATH=[embree3_thirdparty_dir + "include"])
     env.Append(LIBPATH=[embree3_thirdparty_dir + "lib"])
     env.Append(LINKFLAGS= [
@@ -133,7 +133,7 @@ else:
        "psapi.lib"
     ])
 
-    tbb_thirdparty_dir = "#thirdparty-precompiled/tbb_x64-windows-static/"
+    tbb_thirdparty_dir = env.get_precompiled_static_lib_path("tbb")
     env.Append(CPPPATH=[tbb_thirdparty_dir + "include"])
     env.Append(LIBPATH=[tbb_thirdparty_dir + "lib"])
     env.Append(LINKFLAGS= [

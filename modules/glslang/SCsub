@@ -77,6 +77,21 @@ if env["builtin_glslang"]:
     env.modules_sources += thirdparty_obj
 
 
+else:
+    glslang_thirdparty_dir = env.get_precompiled_static_lib_path("glslang")
+    env_glslang.Append(CPPPATH=[glslang_thirdparty_dir + "include"])
+    env.Append(LIBPATH=[glslang_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS= [
+       "GenericCodeGen.lib",
+       "glslang.lib",
+       "glslang-default-resource-limits.lib",
+       "HLSL.lib",
+       "MachineIndependent.lib",
+       "OGLCompiler.lib",
+       "OSDependent.lib",
+       "SPIRV.lib",
+       "SPVRemapper.lib",
+    ])
 # Godot source files
 
 module_obj = []

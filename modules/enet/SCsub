@@ -31,6 +31,13 @@ if env["builtin_enet"]:
     env_thirdparty.add_source_files(thirdparty_obj, thirdparty_sources)
     env.modules_sources += thirdparty_obj
 
+else:
+    enet_thirdparty_dir = env.get_precompiled_static_lib_path("enet")
+    env_enet.Append(CPPPATH=[enet_thirdparty_dir + "include"])
+    env.Append(LIBPATH=[enet_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS= [
+       "enet.lib",
+    ])
 
 # Godot source files
 

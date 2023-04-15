@@ -126,6 +126,13 @@ if env["builtin_freetype"]:
     if not inserted:
         env.Append(LIBS=[lib])
 
+else:
+    freetype_thirdparty_dir = env.get_precompiled_static_lib_path("freetype")
+    env_freetype.Append(CPPPATH=[freetype_thirdparty_dir + "include"])
+    env.Append(LIBPATH=[freetype_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS= [
+       "freetype.lib",
+    ])
 
 # Godot source files
 

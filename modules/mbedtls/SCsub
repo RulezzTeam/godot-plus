@@ -106,6 +106,16 @@ if env["builtin_mbedtls"]:
     env_thirdparty.add_source_files(thirdparty_obj, thirdparty_sources)
     env.modules_sources += thirdparty_obj
 
+else:
+    env_mbed_tls.disable_warnings()
+    mbedtls_thirdparty_dir = "#thirdparty-precompiled/mbedtls_x64-windows-static/"
+    env_mbed_tls.Append(CPPPATH=[mbedtls_thirdparty_dir + "include"])
+    env.Append(LIBPATH=[mbedtls_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS= [
+       "mbedcrypto.lib",
+       "mbedtls.lib",
+       "mbedx509.lib",
+    ])
 
 # Godot source files
 

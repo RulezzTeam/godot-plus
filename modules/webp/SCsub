@@ -144,6 +144,16 @@ if env["builtin_libwebp"]:
     env_thirdparty.add_source_files(thirdparty_obj, thirdparty_sources)
     env.modules_sources += thirdparty_obj
 
+else:
+    webp_thirdparty_dir = "#thirdparty-precompiled/libwebp_x64-windows-static/"
+    env_webp.Append(CPPPATH=[webp_thirdparty_dir + "include"])
+    env.Append(LIBPATH=[webp_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS= [
+       "webp.lib",
+       "webpdecoder.lib",
+       "webpdemux.lib",
+       "webpmux.lib",
+    ])
 
 # Godot source files
 

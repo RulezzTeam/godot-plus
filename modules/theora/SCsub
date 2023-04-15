@@ -4,6 +4,8 @@ Import("env")
 Import("env_modules")
 
 env_theora = env_modules.Clone()
+vorbis_thirdparty_dir = "#thirdparty-precompiled/libvorbis_x64-windows-static/"
+ogg_thirdparty_dir = "#thirdparty-precompiled/libogg_x64-windows-static/"
 
 # Thirdparty source files
 
@@ -83,14 +85,30 @@ if env["builtin_libtheora"]:
     # also requires libogg and libvorbis
     if env["builtin_libogg"]:
         env_theora.Prepend(CPPPATH=["#thirdparty/libogg"])
+    else:
+        env_theora.Prepend(CPPPATH=[ogg_thirdparty_dir + "include"])
+
     if env["builtin_libvorbis"]:
         env_theora.Prepend(CPPPATH=["#thirdparty/libvorbis"])
+    else:
+        env_theora.Prepend(CPPPATH=[vorbis_thirdparty_dir + "include"])
 
     env_thirdparty = env_theora.Clone()
     env_thirdparty.disable_warnings()
     env_thirdparty.add_source_files(thirdparty_obj, thirdparty_sources)
     env.modules_sources += thirdparty_obj
+else:
+    theora_thirdparty_dir = "#thirdparty-precompiled/libtheora_x64-windows-static/"
+    env_theora.Prepend(CPPPATH=[ogg_thirdparty_dir + "include"])
+    env_theora.Prepend(CPPPATH=[vorbis_thirdparty_dir + "include"])
+    env_theora.Append(CPPPATH=[theora_thirdparty_dir + "include"])
 
+    env.Append(LIBPATH=[theora_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS= [
+       "theora.lib",
+       "theoradec.lib",
+       "theoraenc.lib",
+    ])
 
 # Godot source files
 

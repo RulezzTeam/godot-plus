@@ -63,6 +63,21 @@ if env["builtin_pcre2"]:
     pcre2_builtin("32")
     env.modules_sources += thirdparty_obj
 
+else:
+    env_regex.disable_warnings()
+    env_regex.Append(CPPDEFINES=[("PCRE2_CODE_UNIT_WIDTH", 8)])
+    env_regex.Append(CPPDEFINES=[("PCRE2_CODE_UNIT_WIDTH", 16)])
+    env_regex.Append(CPPDEFINES=[("PCRE2_CODE_UNIT_WIDTH", 32)])
+
+    pcre2_thirdparty_dir = "#thirdparty-precompiled/pcre2_x64-windows-static/"
+    env_regex.Append(CPPPATH=[pcre2_thirdparty_dir + "include"])
+    env.Append(LIBPATH=[pcre2_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS= [
+       "pcre2-8.lib",
+       "pcre2-16.lib",
+       "pcre2-32.lib",
+       "pcre2-posix.lib",
+    ])
 
 # Godot source files
 

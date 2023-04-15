@@ -4,6 +4,7 @@ Import("env")
 Import("env_modules")
 
 env_vorbis = env_modules.Clone()
+ogg_thirdparty_dir = "#thirdparty-precompiled/libogg_x64-windows-static/"
 
 # Thirdparty source files
 
@@ -46,11 +47,24 @@ if env["builtin_libvorbis"]:
     # also requires libogg
     if env["builtin_libogg"]:
         env_vorbis.Prepend(CPPPATH=["#thirdparty/libogg"])
+    else:
+        env_vorbis.Append(CPPPATH=[ogg_thirdparty_dir + "include"])
 
     env_thirdparty = env_vorbis.Clone()
     env_thirdparty.disable_warnings()
     env_thirdparty.add_source_files(thirdparty_obj, thirdparty_sources)
     env.modules_sources += thirdparty_obj
+
+else:
+    vorbis_thirdparty_dir = "#thirdparty-precompiled/libvorbis_x64-windows-static/"
+    env_vorbis.Append(CPPPATH=[ogg_thirdparty_dir + "include"])
+    env_vorbis.Append(CPPPATH=[vorbis_thirdparty_dir + "include"])
+    env.Append(LIBPATH=[vorbis_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS= [
+       "vorbis.lib",
+       "vorbisenc.lib",
+       "vorbisfile.lib",
+    ])
 
 
 # Godot source files

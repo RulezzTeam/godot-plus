@@ -115,6 +115,8 @@ if env["builtin_embree"]:
     env.modules_sources += thirdparty_obj
 
 else:
+    env_raycast.disable_warnings()
+
     embree3_thirdparty_dir = "#thirdparty-precompiled/embree3_x64-windows-static/"
     env_raycast.Append(CPPPATH=[embree3_thirdparty_dir + "include"])
     env.Append(LIBPATH=[embree3_thirdparty_dir + "lib"])
@@ -132,7 +134,7 @@ else:
     ])
 
     tbb_thirdparty_dir = "#thirdparty-precompiled/tbb_x64-windows-static/"
-    env_raycast.Append(CPPPATH=[tbb_thirdparty_dir + "include"])
+    env.Append(CPPPATH=[tbb_thirdparty_dir + "include"])
     env.Append(LIBPATH=[tbb_thirdparty_dir + "lib"])
     env.Append(LINKFLAGS= [
        "tbb.lib",
@@ -142,7 +144,7 @@ else:
 
     # We allow the use of SSE and AVX regardless of the Architecture,
     # since Embree automatically determines supported instructions and optimizations at runtime.
-    env.Append(CPPDEFINES=[
+    env_raycast.Append(CPPDEFINES=[
         "EMBREE_TARGET_SSE2",
         "EMBREE_TARGET_AVX",
         "EMBREE_TARGET_AVX2",

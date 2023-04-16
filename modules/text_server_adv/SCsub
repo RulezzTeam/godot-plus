@@ -53,19 +53,16 @@ if env["builtin_harfbuzz"]:
         "src/hb-buffer-serialize.cc",
         "src/hb-buffer-verify.cc",
         "src/hb-buffer.cc",
-        # "src/hb-cairo-utils.cc",
-        # "src/hb-cairo.cc",
         "src/hb-common.cc",
-        # "src/hb-coretext.cc",
-        # "src/hb-directwrite.cc",
+        # 'src/hb-coretext.cc',
+        # 'src/hb-directwrite.cc',
         "src/hb-draw.cc",
-        "src/hb-face-builder.cc",
         "src/hb-face.cc",
         "src/hb-fallback-shape.cc",
         "src/hb-font.cc",
-        # "src/hb-gdi.cc",
-        # "src/hb-glib.cc",
-        # "src/hb-gobject-structs.cc",
+        # 'src/hb-gdi.cc',
+        # 'src/hb-glib.cc',
+        # 'src/hb-gobject-structs.cc',
         "src/hb-icu.cc",
         "src/hb-map.cc",
         "src/hb-number.cc",
@@ -97,9 +94,6 @@ if env["builtin_harfbuzz"]:
         "src/hb-ot-shape.cc",
         "src/hb-ot-tag.cc",
         "src/hb-ot-var.cc",
-        "src/hb-outline.cc",
-        "src/hb-paint-extents.cc",
-        "src/hb-paint.cc",
         "src/hb-set.cc",
         "src/hb-shape-plan.cc",
         "src/hb-shape.cc",
@@ -110,13 +104,12 @@ if env["builtin_harfbuzz"]:
         "src/hb-subset-cff1.cc",
         "src/hb-subset-cff2.cc",
         "src/hb-subset-input.cc",
-        "src/hb-subset-instancer-solver.cc",
         "src/hb-subset-plan.cc",
         "src/hb-subset-repacker.cc",
         "src/hb-subset.cc",
         "src/hb-ucd.cc",
         "src/hb-unicode.cc",
-        # "src/hb-uniscribe.cc",
+        # 'src/hb-uniscribe.cc'
     ]
 
     if freetype_enabled:
@@ -150,6 +143,10 @@ if env["builtin_harfbuzz"]:
             )
         if env["builtin_freetype"]:
             env_harfbuzz.Prepend(CPPPATH=["#thirdparty/freetype/include"])
+        else:
+            freetype_thirdparty_dir = env.get_precompiled_static_lib_path("freetype")
+            env_harfbuzz.Append(CPPPATH=[freetype_thirdparty_dir + "include"])
+
         if env["builtin_graphite"] and env["graphite"]:
             env_harfbuzz.Prepend(CPPPATH=["#thirdparty/graphite/include"])
             env_harfbuzz.Append(CCFLAGS=["-DGRAPHITE2_STATIC"])
@@ -521,10 +518,18 @@ module_obj = []
 
 if env["builtin_msdfgen"] and msdfgen_enabled:
     env_text_server_adv.Prepend(CPPPATH=["#thirdparty/msdfgen"])
+else:
+    msdfgen_thirdparty_dir = env.get_precompiled_static_lib_path("msdfgen")
+    env_text_server_adv.Append(CPPPATH=[msdfgen_thirdparty_dir + "include"])
+    env.Append(CPPPATH=[msdfgen_thirdparty_dir + "include"])
 
-if env["builtin_freetype"] and freetype_enabled:
-    env_text_server_adv.Append(CPPDEFINES=["FT_CONFIG_OPTION_USE_BROTLI"])
-    env_text_server_adv.Prepend(CPPPATH=["#thirdparty/freetype/include"])
+if freetype_enabled:
+    if env["builtin_freetype"]:
+        env_text_server_adv.Append(CPPDEFINES=["FT_CONFIG_OPTION_USE_BROTLI"])
+        env_text_server_adv.Prepend(CPPPATH=["#thirdparty/freetype/include"])
+    else:
+        freetype_thirdparty_dir = env.get_precompiled_static_lib_path("freetype")
+        env_text_server_adv.Append(CPPPATH=[freetype_thirdparty_dir + "include"])
 
 if env["builtin_graphite"] and freetype_enabled and env["graphite"]:
     env_text_server_adv.Prepend(CPPPATH=["#thirdparty/graphite/include"])

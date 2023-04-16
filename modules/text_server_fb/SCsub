@@ -11,11 +11,28 @@ env_text_server_fb = env_modules.Clone()
 if "svg" in env.module_list:
     env_text_server_fb.Prepend(CPPPATH=["#thirdparty/thorvg/inc", "#thirdparty/thorvg/src/lib"])
 
-if env["builtin_msdfgen"] and msdfgen_enabled:
-    env_text_server_fb.Prepend(CPPPATH=["#thirdparty/msdfgen"])
+if msdfgen_enabled:
+    if env["builtin_msdfgen"]:
+        env_text_server_fb.Prepend(CPPPATH=["#thirdparty/msdfgen"])
+    else:
+        msdfgen_thirdparty_dir = env.get_precompiled_static_lib_path("msdfgen")
+        env_text_server_fb.Prepend(CPPPATH=[msdfgen_thirdparty_dir + "include"])
+        env.Append(LIBPATH=[msdfgen_thirdparty_dir + "lib"])
+        env.Append(LINKFLAGS= [
+           "msdfgen-core.lib",
+           "msdfgen-ext.lib",
+        ])
 
-if env["builtin_freetype"] and freetype_enabled:
-    env_text_server_fb.Append(CPPDEFINES=["FT_CONFIG_OPTION_USE_BROTLI"])
-    env_text_server_fb.Prepend(CPPPATH=["#thirdparty/freetype/include"])
+if freetype_enabled:
+    if env["builtin_freetype"]:
+        env_text_server_fb.Append(CPPDEFINES=["FT_CONFIG_OPTION_USE_BROTLI"])
+        env_text_server_fb.Prepend(CPPPATH=["#thirdparty/freetype/include"])
+    else:
+        freetype_thirdparty_dir = env.get_precompiled_static_lib_path("freetype")
+        env_text_server_fb.Prepend(CPPPATH=[freetype_thirdparty_dir + "include"])
+        env.Append(LIBPATH=[freetype_thirdparty_dir + "lib"])
+        env.Append(LINKFLAGS= [
+           "freetype.lib",
+        ])
 
 env_text_server_fb.add_source_files(env.modules_sources, "*.cpp")

@@ -35,8 +35,8 @@ def make_icu_data(target, source, env):
 # Thirdparty source files
 
 thirdparty_obj = []
-freetype_enabled = "freetype" in env.module_list
-msdfgen_enabled = "msdfgen" in env.module_list
+freetype_enabled = True
+msdfgen_enabled = True
 
 if "svg" in env.module_list:
     env_text_server_adv.Prepend(CPPPATH=["#thirdparty/thorvg/inc", "#thirdparty/thorvg/src/lib"])
@@ -168,6 +168,14 @@ if env["builtin_harfbuzz"]:
     if not inserted:
         env.Append(LIBS=[lib])
 
+else:
+    harfbuzz_thirdparty_dir = env.get_precompiled_static_lib_path("harfbuzz")
+    env_text_server_adv.Append(CPPPATH=[harfbuzz_thirdparty_dir + "include"])
+    env.Append(LIBPATH=[harfbuzz_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS= [
+       "harfbuzz.lib",
+       "harfbuzz-subset.lib",
+    ])
 
 if env["builtin_graphite"] and freetype_enabled and env["graphite"]:
     env_graphite = env_modules.Clone()
@@ -238,6 +246,18 @@ if env["builtin_graphite"] and freetype_enabled and env["graphite"]:
     if not inserted:
         env.Append(LIBS=[lib])
 
+else:
+    graphite2_thirdparty_dir = env.get_precompiled_static_lib_path("graphite2")
+    env_text_server_adv.Append(CPPPATH=[graphite2_thirdparty_dir + "include"])
+    env.Append(LIBPATH=[graphite2_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS= [
+       "graphite2.lib",
+    ])
+
+    env_text_server_adv.Append(LIBPATH=[graphite2_thirdparty_dir + "lib"])
+    env_text_server_adv.Append(LINKFLAGS= [
+       "graphite2.lib",
+    ])
 
 if env["builtin_icu4c"]:
     env_icu = env_modules.Clone()
@@ -512,15 +532,29 @@ if env["builtin_icu4c"]:
 
 module_obj = []
 
-if env["builtin_msdfgen"] and msdfgen_enabled:
-    env_text_server_adv.Prepend(CPPPATH=["#thirdparty/msdfgen"])
+if msdfgen_enabled:
+    if env["builtin_msdfgen"]:
+        env_text_server_adv.Prepend(CPPPATH=["#thirdparty/msdfgen"])
+    else:
+        msdfgen_thirdparty_dir = env.get_precompiled_static_lib_path("msdfgen")
+        env_text_server_adv.Prepend(CPPPATH=[msdfgen_thirdparty_dir + "include"])
 
-if env["builtin_freetype"] and freetype_enabled:
-    env_text_server_adv.Append(CPPDEFINES=["FT_CONFIG_OPTION_USE_BROTLI"])
-    env_text_server_adv.Prepend(CPPPATH=["#thirdparty/freetype/include"])
+if freetype_enabled:
+    if env["builtin_freetype"]:
+        env_text_server_adv.Append(CPPDEFINES=["FT_CONFIG_OPTION_USE_BROTLI"])
+        env_text_server_adv.Prepend(CPPPATH=["#thirdparty/freetype/include"])
+    else:
+        freetype_thirdparty_dir = env.get_precompiled_static_lib_path("freetype")
+        env_text_server_adv.Prepend(CPPPATH=[freetype_thirdparty_dir + "include"])
+        env_harfbuzz.Prepend(CPPPATH=[freetype_thirdparty_dir + "include"])
 
-if env["builtin_graphite"] and freetype_enabled and env["graphite"]:
-    env_text_server_adv.Prepend(CPPPATH=["#thirdparty/graphite/include"])
+    if env["builtin_graphite"] and env["graphite"]:
+        env_text_server_adv.Prepend(CPPPATH=["#thirdparty/graphite/include"])
+    else:
+        graphite2_thirdparty_dir = env.get_precompiled_static_lib_path("graphite2")
+        env_text_server_adv.Prepend(CPPPATH=[graphite2_thirdparty_dir + "include"])
+        env_harfbuzz.Prepend(CPPPATH=[graphite2_thirdparty_dir + "include"])
+
 
 env_text_server_adv.add_source_files(module_obj, "*.cpp")
 env.modules_sources += module_obj

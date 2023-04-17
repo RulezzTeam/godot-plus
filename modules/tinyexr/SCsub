@@ -29,26 +29,7 @@ if env["builtin_tinyexr"]:
     env_thirdparty.disable_warnings()
     env_thirdparty.add_source_files(thirdparty_obj, thirdparty_sources)
     env.modules_sources += thirdparty_obj
-else:
-    tinyexr_thirdparty_dir = env.get_precompiled_static_lib_path("tinyexr")
-    env_tinyexr.Append(CPPPATH=[tinyexr_thirdparty_dir + "include"])
-    # Enable threaded loading with C++11.
-    env_tinyexr.Append(CPPDEFINES=["TINYEXR_USE_THREAD"])
-    # miniz is an external dependency, we could add it but we can instead rely
-    # on our existing bundled zlib.
-    env_tinyexr.Append(CPPDEFINES=[("TINYEXR_USE_MINIZ", 1)])
 
-    env.Append(LIBPATH=[tinyexr_thirdparty_dir + "lib"])
-    env.Append(LINKFLAGS=[
-        "tinyexr.lib",
-    ])
-
-    miniz_thirdparty_dir = env.get_precompiled_static_lib_path("miniz")
-    env_tinyexr.Append(CPPPATH=[miniz_thirdparty_dir + "include"])
-    env.Append(LIBPATH=[miniz_thirdparty_dir + "lib"])
-    env.Append(LINKFLAGS=[
-        "miniz.lib",
-    ])
 # Godot source files
 
 module_obj = []

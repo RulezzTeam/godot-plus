@@ -193,7 +193,8 @@ def get_opts():
                      ("sse2", "sse4", "avx", "avx2", "avx512")),
         EnumVariable("use_parallel_linking", "Number of linking threads", "8",
                      ("1", "2", "3", "4", "5", "6", "7", "8")),
-        ("use_parallel_compiling", "Number of compiling threads", "6")
+        ("use_parallel_compiling", "Number of compiling threads", "32"),
+        BoolVariable("use_embree_static_library", "Use the static Embree library", True)
     ]
 
 
@@ -290,7 +291,7 @@ def setup_msvc_auto(env):
     env.Tool("mssdk")  # we want the MS SDK
 
     env.Append(CCFLAGS=["/cgthreads" + env["use_parallel_linking"]])
-    env.Append(CCFLAGS=["/MP 64"])
+    env.Append(CCFLAGS=["/MP " + env["use_parallel_compiling"]])
 
     if env["use_simd"] == "sse2":
         env.Append(CCFLAGS=["/arch:SSE2"])
@@ -329,6 +330,29 @@ def setup_msvc_auto(env):
             "miniz.lib",
         ])
 
+    if not env["builtin_libpng"]:
+        libpng_thirdparty_dir = env.get_precompiled_static_lib_path("libpng")
+        env.Append(CPPPATH=[libpng_thirdparty_dir + "include"])
+        env.Append(LIBPATH=[libpng_thirdparty_dir + "lib"])
+        env.Append(LINKFLAGS= [
+           "libpng16.lib",
+        ])
+
+    if not env["builtin_thorvg"]:
+        thorvg_thirdparty_dir = env.get_precompiled_static_lib_path("thorvg")
+        env.Append(CPPPATH=[thorvg_thirdparty_dir + "include"])
+        env.Append(LIBPATH=[thorvg_thirdparty_dir + "lib"])
+        env.Append(LINKFLAGS= [
+           "thorvg.lib",
+        ])
+
+    if not env["builtin_enet"]:
+        enet_thirdparty_dir = env.get_precompiled_static_lib_path("enet")
+        env.Append(CPPPATH=[enet_thirdparty_dir + "include"])
+        env.Append(LIBPATH=[enet_thirdparty_dir + "lib"])
+        env.Append(LINKFLAGS=[
+            "enet.lib",
+        ])
 
 def setup_mingw(env):
     """Set up env for use with mingw"""

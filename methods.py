@@ -903,10 +903,13 @@ def add_program(env, name, sources, **args):
     return program
 
 
-def get_precompiled_static_lib_path(env, name):
-    if env["use_static_cpp"]:
-        return "#thirdparty-precompiled/%s_x64-windows-static/" % name
-    return "#thirdparty-precompiled/%s_x64-windows-static-md/" % name
+def get_precompiled_static_lib_path(env, name, use_static=True):
+    if use_static:
+        if env["use_static_cpp"]:
+            return "#thirdparty-precompiled/%s_x64-windows-static/" % name
+        return "#thirdparty-precompiled/%s_x64-windows-static-md/" % name
+    else:
+        return "#thirdparty-precompiled/%s_x64-windows/" % name
 
 
 def CommandNoCache(env, target, sources, command, **args):

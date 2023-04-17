@@ -117,30 +117,44 @@ if env["builtin_embree"]:
 else:
     env_raycast.disable_warnings()
 
-    embree3_thirdparty_dir = env.get_precompiled_static_lib_path("embree3")
+    embree3_thirdparty_dir = env.get_precompiled_static_lib_path("embree3", False)
     env_raycast.Append(CPPPATH=[embree3_thirdparty_dir + "include"])
     env.Append(LIBPATH=[embree3_thirdparty_dir + "lib"])
     env.Append(LINKFLAGS= [
        "embree3.lib",
-       "embree_avx.lib",
-       "embree_avx2.lib",
-       "embree_sse42.lib",
-       "lexers.lib",
-       "math.lib",
-       "simd.lib",
-       "sys.lib",
-       "tasking.lib",
-       "psapi.lib"
     ])
 
-    tbb_thirdparty_dir = env.get_precompiled_static_lib_path("tbb")
+    env["use_embree_static"] = False
+    env["use_tbb_static"] = False
+    if env["use_embree_static"]:
+        env.Append(LINKFLAGS=[
+            "embree_avx.lib",
+            "embree_avx2.lib",
+            "embree_sse42.lib",
+            "lexers.lib",
+            "math.lib",
+            "simd.lib",
+            "sys.lib",
+            "tasking.lib",
+            "psapi.lib"
+        ])
+
+
+    tbb_thirdparty_dir = env.get_precompiled_static_lib_path("tbb", False)
     env.Append(CPPPATH=[tbb_thirdparty_dir + "include"])
     env.Append(LIBPATH=[tbb_thirdparty_dir + "lib"])
-    env.Append(LINKFLAGS= [
-       "tbb.lib",
-       "tbbmalloc.lib",
-       "tbbmalloc_proxy.lib",
-    ])
+    if env["use_tbb_static"]:
+        env.Append(LINKFLAGS= [
+           "tbb.lib",
+           "tbbmalloc.lib",
+           "tbbmalloc_proxy.lib",
+        ])
+    else:
+        env.Append(LINKFLAGS=[
+            "tbb12.lib",
+            "tbbmalloc.lib",
+            "tbbmalloc_proxy.lib",
+        ])
 
     # We allow the use of SSE and AVX regardless of the Architecture,
     # since Embree automatically determines supported instructions and optimizations at runtime.

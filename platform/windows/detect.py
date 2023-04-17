@@ -189,6 +189,11 @@ def get_opts():
         BoolVariable("use_static_cpp", "Link MinGW/MSVC C++ runtime libraries statically", True),
         BoolVariable("use_asan", "Use address sanitizer (ASAN)", False),
         BoolVariable("debug_crt", "Compile with MSVC's debug CRT (/MDd)", False),
+        EnumVariable("use_simd", "Enable optimizations using simd instructions", "avx2",
+                     ("sse2", "sse4", "avx", "avx2", "avx512")),
+        EnumVariable("use_parallel_linking", "Number of linking threads", "8",
+                     ("1", "2", "3", "4", "5", "6", "7", "8")),
+        ("use_parallel_compiling", "Number of compiling threads", "6")
     ]
 
 
@@ -284,8 +289,45 @@ def setup_msvc_auto(env):
     env.Tool("msvc")
     env.Tool("mssdk")  # we want the MS SDK
 
+    env.Append(CCFLAGS=["/cgthreads" + env["use_parallel_linking"]])
+    env.Append(CCFLAGS=["/MP 64"])
+
+    if env["use_simd"] == "sse2":
+        env.Append(CCFLAGS=["/arch:SSE2"])
+    elif env["use_simd"] == "sse4":
+        env.Append(CCFLAGS=["/arch:SSE2"])
+    elif env["use_simd"] == "avx":
+        env.Append(CCFLAGS=["/arch:AVX"])
+    elif env["use_simd"] == "avx2":
+        env.Append(CCFLAGS=["/arch:AVX2"])
+    elif env["use_simd"] == "avx512":
+        env.Append(CCFLAGS=["/arch:AVX512"])
+
+    # We start supporting SSE3 and SSE4 if we support AVX
+    if env["use_simd"] in ["sse4", "avx", "avx2", "avx512"]:
+        env.Append(CPPDEFINES=["__SSE4_1__", "__SSE4_2__", "__SSE3__", "__SSSE3__"])
+        env.Append(CCFLAGS=["/d2archSSE42"])
+
     # Note: actual compiler version can be found in env['MSVC_VERSION'], e.g. "14.1" for VS2015
-    print("Found MSVC version %s, arch %s" % (env["MSVC_VERSION"], env["arch"]))
+    print("Found MSVC version %s, arch %s, simd: %s" % (env["MSVC_VERSION"], env["arch"], env["use_simd"]))
+    print("use_parallel_linking: %s, use_parallel_compiling: %s" % (env["use_parallel_linking"], env["use_parallel_compiling"]))
+
+    if not env["builtin_tinyexr"]:
+        tinyexr_thirdparty_dir = env.get_precompiled_static_lib_path("tinyexr")
+        env.Append(CPPPATH=[tinyexr_thirdparty_dir + "include"])
+        env.Append(CPPDEFINES=["TINYEXR_USE_THREAD"])
+        env.Append(CPPDEFINES=[("TINYEXR_USE_MINIZ", 1)])
+        env.Append(LIBPATH=[tinyexr_thirdparty_dir + "lib"])
+        env.Append(LINKFLAGS=[
+            "tinyexr.lib",
+        ])
+
+        miniz_thirdparty_dir = env.get_precompiled_static_lib_path("miniz")
+        env.Append(CPPPATH=[miniz_thirdparty_dir + "include"])
+        env.Append(LIBPATH=[miniz_thirdparty_dir + "lib"])
+        env.Append(LINKFLAGS=[
+            "miniz.lib",
+        ])
 
 
 def setup_mingw(env):

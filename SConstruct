@@ -213,6 +213,8 @@ opts.Add(BoolVariable("use_precise_math_checks", "Math checks use very precise e
 
 # Thirdparty libraries
 opts.Add(BoolVariable("builtin_certs", "Use the built-in SSL certificates bundles", True))
+opts.Add(BoolVariable("builtin_cvtt", "Use the built-in convectionkernels library", False))
+opts.Add(BoolVariable("builtin_tinyexr", "Use the built-in tinyexr library", False))
 opts.Add(BoolVariable("builtin_embree", "Use the built-in Embree library", True))
 opts.Add(BoolVariable("builtin_enet", "Use the built-in ENet library", True))
 opts.Add(BoolVariable("builtin_freetype", "Use the built-in FreeType library", True))
@@ -554,6 +556,7 @@ if selected_platform in platform_list:
         # We start supporting SSE3 and SSE4 if we support AVX
         if env["use_simd"] == "avx" or env["use_simd"] == "avx2" or env["use_simd"] == "avx512":
             env.Append(CPPDEFINES=["__SSE4_1__", "__SSE4_2__", "__SSE3__", "__SSSE3__"])
+            #env.Append(CCFLAGS=["/d2archSSSE3", "/d2archSSE41", "/d2archSSE42"])
 
         if env["use_simd"] == "sse2":
             env.Append(CCFLAGS=["/arch:SSE2"])
@@ -620,7 +623,8 @@ if selected_platform in platform_list:
     else:
         # MSVC doesn't have clear C standard support, /std only covers C++.
         # We apply it to CCFLAGS (both C and C++ code) in case it impacts C features.
-        env.Prepend(CCFLAGS=["/std:c++17"])
+        #env.Prepend(CCFLAGS=["/std:c++20", "/experimental:module"])
+        env.Prepend(CCFLAGS=["/std:c++17", "/experimental:module"])
 
     # Enforce our minimal compiler version requirements
     cc_version = methods.get_compiler_version(env) or {

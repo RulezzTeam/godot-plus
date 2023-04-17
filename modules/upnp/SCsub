@@ -37,6 +37,15 @@ if env["builtin_miniupnpc"]:
     env_thirdparty.add_source_files(thirdparty_obj, thirdparty_sources)
     env.modules_sources += thirdparty_obj
 
+else:
+    miniupnpc_thirdparty_dir = env.get_precompiled_static_lib_path("miniupnpc")
+    env_upnp.Append(CPPPATH=[miniupnpc_thirdparty_dir + "include"])
+    env_upnp.Append(CPPDEFINES=["MINIUPNP_STATICLIB", "MINIUPNPC_STATICLIB"])
+
+    env.Append(LIBPATH=[miniupnpc_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS=[
+        "miniupnpc.lib",
+    ])
 
 # Godot source files
 

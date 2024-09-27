@@ -90,6 +90,14 @@ if env["builtin_zlib"]:
 
     env_thirdparty.add_source_files(thirdparty_obj, thirdparty_zlib_sources)
 
+else:
+    zlib_thirdparty_dir = env.get_precompiled_static_lib_path("zlib")
+    env_thirdparty.Append(CPPPATH=[zlib_thirdparty_dir + "include"])
+    env.Append(LIBPATH=[zlib_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS=[
+        "zlib.lib",
+    ])
+
 # Minizip library, could be unbundled in theory
 # However, our version has some custom modifications, so it won't compile with the system one
 thirdparty_minizip_dir = "#thirdparty/minizip/"
@@ -142,6 +150,14 @@ if env["builtin_zstd"]:
 
     env_thirdparty.add_source_files(thirdparty_obj, thirdparty_zstd_sources)
 
+else:
+    zstd_thirdparty_dir = env.get_precompiled_static_lib_path("zstd")
+    env_thirdparty.Append(CPPPATH=[zstd_thirdparty_dir + "include"])
+    env.Append(CPPPATH=[zstd_thirdparty_dir + "include"])
+    env.Append(LIBPATH=[zstd_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS=[
+        "zstd.lib",
+    ])
 
 env.core_sources += thirdparty_obj
 

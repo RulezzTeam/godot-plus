@@ -35,7 +35,7 @@
 
 #include "upnp_device.h"
 
-#include <miniupnpc.h>
+#include <miniupnpc/miniupnpc.h>
 
 class UPNP : public RefCounted {
 	GDCLASS(UPNP, RefCounted);

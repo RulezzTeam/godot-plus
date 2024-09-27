@@ -33,6 +33,14 @@ if env["builtin_squish"]:
     env.modules_sources += thirdparty_obj
 
 
+else:
+    squish_thirdparty_dir = env.get_precompiled_static_lib_path("libsquish")
+    env_squish.Append(CPPPATH=[squish_thirdparty_dir + "include"])
+    env.Append(LIBPATH=[squish_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS= [
+       "squish.lib",
+    ])
+
 # Godot source files
 
 module_obj = []

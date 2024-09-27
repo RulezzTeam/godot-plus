@@ -96,6 +96,9 @@ if env["builtin_freetype"]:
     # Also requires libpng headers
     if env["builtin_libpng"]:
         env_freetype.Prepend(CPPPATH=["#thirdparty/libpng"])
+    else:
+        libpng_thirdparty_dir = env.get_precompiled_static_lib_path("libpng")
+        env_freetype.Append(CPPPATH=[libpng_thirdparty_dir + "include"])
 
     sfnt = thirdparty_dir + "src/sfnt/sfnt.c"
     # Must be done after all CPPDEFINES are being set so we can copy them.
@@ -126,6 +129,43 @@ if env["builtin_freetype"]:
     if not inserted:
         env.Append(LIBS=[lib])
 
+else:
+    freetype_thirdparty_dir = env.get_precompiled_static_lib_path("freetype")
+    env_freetype.Append(CPPPATH=[freetype_thirdparty_dir + "include"])
+    env.Append(LIBPATH=[freetype_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS= [
+       "freetype.lib",
+    ])
+
+    bzip2_thirdparty_dir = env.get_precompiled_static_lib_path("bzip2")
+    env_freetype.Append(CPPPATH=[bzip2_thirdparty_dir + "include"])
+    env.Append(LIBPATH=[bzip2_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS= [
+       "bz2.lib",
+    ])
+
+    zlib_thirdparty_dir = env.get_precompiled_static_lib_path("zlib")
+    env_freetype.Append(CPPPATH=[zlib_thirdparty_dir + "include"])
+    env.Append(LIBPATH=[zlib_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS= [
+       "zlib.lib",
+    ])
+
+    libpng_thirdparty_dir = env.get_precompiled_static_lib_path("libpng")
+    env_freetype.Append(CPPPATH=[zlib_thirdparty_dir + "include"])
+    env.Append(LIBPATH=[zlib_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS= [
+       "libpng16.lib",
+    ])
+
+    brotli_thirdparty_dir = env.get_precompiled_static_lib_path("brotli")
+    env_freetype.Append(CPPPATH=[brotli_thirdparty_dir + "include"])
+    env.Append(LIBPATH=[brotli_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS= [
+       "brotlicommon-static.lib",
+       "brotlidec-static.lib",
+       "brotlienc-static.lib",
+    ])
 
 # Godot source files
 

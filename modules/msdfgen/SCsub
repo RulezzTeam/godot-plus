@@ -54,6 +54,15 @@ if env["builtin_msdfgen"]:
     if not inserted:
         env.Append(LIBS=[lib])
 
+else:
+    msdfgen_thirdparty_dir = env.get_precompiled_static_lib_path("msdfgen")
+    env_msdfgen.Append(CPPPATH=[msdfgen_thirdparty_dir + "include"])
+    env.Append(CPPPATH=[msdfgen_thirdparty_dir + "include"])
+    env.Append(LIBPATH=[msdfgen_thirdparty_dir + "lib"])
+    env.Append(LINKFLAGS= [
+       "msdfgen-core.lib",
+       "msdfgen-ext.lib",
+    ])
 
 # Godot source files
 

@@ -135,6 +135,7 @@ env_base.__class__.use_windows_spawn_fix = methods.use_windows_spawn_fix
 env_base.__class__.add_shared_library = methods.add_shared_library
 env_base.__class__.add_library = methods.add_library
 env_base.__class__.add_program = methods.add_program
+env_base.__class__.get_precompiled_static_lib_path = methods.get_precompiled_static_lib_path
 env_base.__class__.CommandNoCache = methods.CommandNoCache
 env_base.__class__.Run = methods.Run
 env_base.__class__.disable_warnings = methods.disable_warnings
@@ -211,6 +212,9 @@ opts.Add(BoolVariable("use_precise_math_checks", "Math checks use very precise e
 
 # Thirdparty libraries
 opts.Add(BoolVariable("builtin_certs", "Use the built-in SSL certificates bundles", True))
+opts.Add(BoolVariable("builtin_cvtt", "Use the built-in convectionkernels library", False))
+opts.Add(BoolVariable("builtin_tinyexr", "Use the built-in tinyexr library", False))
+opts.Add(BoolVariable("builtin_thorvg", "Use the built-in thorvg library", False))
 opts.Add(BoolVariable("builtin_embree", "Use the built-in Embree library", True))
 opts.Add(BoolVariable("builtin_enet", "Use the built-in ENet library", True))
 opts.Add(BoolVariable("builtin_freetype", "Use the built-in FreeType library", True))
@@ -538,7 +542,7 @@ if selected_platform in platform_list:
     # are actually handled to change compile options, etc.
     detect.configure(env)
 
-    print(f'Building for platform "{selected_platform}", architecture "{env["arch"]}", target "{env["target"]}".')
+    print(f'Building for platform "{selected_platform}", architecture "{env["arch"]}", target "{env["target"]}", debug_symbols: "{env["debug_symbols"]}".')
     if env.dev_build:
         print("NOTE: Developer build, with debug optimization level and debug symbols (unless overridden).")
 
@@ -602,7 +606,8 @@ if selected_platform in platform_list:
     else:
         # MSVC doesn't have clear C standard support, /std only covers C++.
         # We apply it to CCFLAGS (both C and C++ code) in case it impacts C features.
-        env.Prepend(CCFLAGS=["/std:c++17"])
+        #env.Prepend(CCFLAGS=["/std:c++20", "/experimental:module"])
+        env.Prepend(CCFLAGS=["/std:c++17", "/experimental:module"])
 
     # Enforce our minimal compiler version requirements
     cc_version = methods.get_compiler_version(env) or {

@@ -42,6 +42,9 @@ else:
 
 if env["builtin_zstd"]:
     env_basisu.Prepend(CPPPATH=["#thirdparty/zstd"])
+else:
+    zstd_thirdparty_dir = env.get_precompiled_static_lib_path("zstd")
+    env_basisu.Append(CPPPATH=[zstd_thirdparty_dir + "include"])
 
 if env.dev_build:
     env_basisu.Append(CPPDEFINES=[("BASISU_DEVEL_MESSAGES", 1), ("BASISD_ENABLE_DEBUG_FLAGS", 1)])
